@@ -1,0 +1,50 @@
+[tool.poetry]
+name = "mulligan-simulator"
+version = "0.1.0"
+description = "An interactive tool for simulating Magic: The Gathering mulligans and recording user decisions"
+authors = ["Aviouslyy <your-email@example.com>"]
+readme = "README.md"
+packages = [{include = "mulligan_simulator"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+mtg-parser = "^0.0.1a40"
+click = "^8.1.0"
+sqlalchemy = "^2.0.0"
+psycopg2-binary = "^2.9.0"
+alembic = "^1.12.0"
+python-dotenv = "^1.0.0"
+rich = "^13.0.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.0"
+pytest-cov = "^4.1.0"
+pytest-mock = "^3.11.0"
+black = "^23.0.0"
+isort = "^5.12.0"
+mypy = "^1.5.0"
+flake8 = "^6.0.0"
+
+[tool.poetry.scripts]
+mulligan-simulator = "mulligan_simulator.cli:main"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "--strict-markers",
+    "--strict-config",
+    "--verbose",
+    "--tb=short"
+]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests",
+    "unit: marks tests as unit tests"
+]

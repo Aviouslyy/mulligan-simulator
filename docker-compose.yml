@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: mulligan-simulator-db
+    environment:
+      POSTGRES_DB: mulligan_simulator
+      POSTGRES_USER: mulligan_user
+      POSTGRES_PASSWORD: mulligan_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mulligan_user -d mulligan_simulator"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    container_name: mulligan-simulator-app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://mulligan_user:mulligan_password@postgres:5432/mulligan_simulator
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: poetry run python -m mulligan_simulator.cli --help
+
+volumes:
+  postgres_data:
